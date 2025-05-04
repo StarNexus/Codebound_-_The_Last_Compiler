@@ -65073,6 +65073,7 @@ MonoBehaviour:
   cameraLockPosition: {x: -4.9, y: -47.42665, z: -0.2829638}
   playerLockPosition: {x: -22.37154, y: -52.7, z: 0}
   virtualCamera: {fileID: 1052805470}
+  quizBoss: {fileID: 0}
 --- !u!61 &223151869
 BoxCollider2D:
   m_ObjectHideFlags: 0

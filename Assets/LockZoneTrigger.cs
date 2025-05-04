@@ -1,23 +1,25 @@
 using UnityEngine;
 using Cinemachine;
 
-// Since QuizBoss is in the global namespace, we just needed to ensure the file compiles
 public class LockZoneTrigger : MonoBehaviour
 {
     [SerializeField] private Vector3 cameraLockPosition;
     [SerializeField] private Vector3 playerLockPosition;
     [SerializeField] private CinemachineVirtualCamera virtualCamera;
+    [SerializeField] private QuizBoss quizBoss; // Make it assignable in Inspector
     
     private PlayerMovement playerMovement;
     private Transform originalCameraFollow;
-    private QuizBoss quizBoss;
 
     private void Start()
     {
-        quizBoss = GetComponent<QuizBoss>();
         if (quizBoss == null)
         {
-            Debug.LogError("QuizBoss component not found! Please add it to the same GameObject.");
+            quizBoss = GetComponent<QuizBoss>();
+            if (quizBoss == null)
+            {
+                quizBoss = FindAnyObjectByType<QuizBoss>();
+            }
         }
     }
 
