@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using System;
+using Cinemachine;
 
 public class QuestionUI : MonoBehaviour
 {
@@ -10,6 +10,11 @@ public class QuestionUI : MonoBehaviour
     public TMP_InputField answerInput;
     public Button submitButton;
     public BossEnemy bossEnemy;
+    public PlayerMovement playerMovement;
+    public CinemachineVirtualCamera virtualCamera;
+    public Transform playerTransform;
+
+    private Transform originalCameraFollow;
 
     void Start()
     {
@@ -17,9 +22,14 @@ public class QuestionUI : MonoBehaviour
         if (bossEnemy != null)
         {
             bossEnemy.QuestionAsked += ShowQuestion;
-            bossEnemy.BossDefeated += HideUI;
+            bossEnemy.BossDefeated += OnBossDefeated;
         }
         submitButton.onClick.AddListener(OnSubmit);
+
+        if (virtualCamera != null)
+        {
+            originalCameraFollow = virtualCamera.Follow;
+        }
     }
 
     void ShowQuestion(string question)
@@ -32,6 +42,18 @@ public class QuestionUI : MonoBehaviour
         uiPanel.SetActive(true);
         questionText.text = question;
         answerInput.text = "";
+        
+        // Lock player movement when questions start
+        if (playerMovement != null)
+        {
+            playerMovement.LockMovement();
+        }
+
+        // Lock camera
+        if (virtualCamera != null)
+        {
+            virtualCamera.Follow = null;
+        }
     }
 
     void OnSubmit()
@@ -42,23 +64,21 @@ public class QuestionUI : MonoBehaviour
         }
     }
 
-    void HideUI()
+    void OnBossDefeated()
     {
+        // Hide the UI
         uiPanel.SetActive(false);
-    }
-}
 
-// Assuming this is the BossEnemy class definition
-public class BossEnemyDuplicate : MonoBehaviour
-{
-    public event Action<string> QuestionAsked;
-    public event Action BossDefeated;
+        // Re-enable player movement
+        if (playerMovement != null)
+        {
+            playerMovement.UnlockMovement();
+        }
 
-    // Other existing methods and properties
-
-    public void SubmitAnswer(string answer)
-    {
-        // Handle the submitted answer here
-        Debug.Log($"Answer submitted: {answer}");
+        // Restore camera follow
+        if (virtualCamera != null)
+        {
+            virtualCamera.Follow = originalCameraFollow;
+        }
     }
 }
