@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -8,17 +7,18 @@ public class GroundTile : Tile
     [Header("Tileset Sprites")]
     public Sprite[] tilesetSprites; // Array of sprites from the tileset
 
+#if UNITY_EDITOR
     private void OnEnable()
     {
-        // Automatically load all sprites from the tileset if the array is empty
+        // This code only runs in the editor
         if (tilesetSprites == null || tilesetSprites.Length == 0)
         {
-            string path = AssetDatabase.GetAssetPath(this); // Get the path of the GroundTile asset
-            Object[] loadedSprites = AssetDatabase.LoadAllAssetsAtPath(path);
-
+            string path = UnityEditor.AssetDatabase.GetAssetPath(this);
+            Object[] loadedSprites = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(path);
             tilesetSprites = System.Array.FindAll(loadedSprites, obj => obj is Sprite) as Sprite[];
         }
     }
+#endif
 
     public override void RefreshTile(Vector3Int position, ITilemap tilemap)
     {
@@ -42,7 +42,7 @@ public class GroundTile : Tile
             tileData.sprite = tilesetSprites[Random.Range(0, tilesetSprites.Length)];
         }
 
-        // Set the collider type (optional)
+        // Set the collider type
         tileData.colliderType = Tile.ColliderType.Sprite;
     }
 }
