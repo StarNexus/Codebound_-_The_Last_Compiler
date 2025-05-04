@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
     private Animator animator; // Reference to the Animator component
     private bool facingRight = true; // Track the direction the player is facing
+    private bool movementLocked = false; // Lock movement
 
     void Start()
     {
@@ -19,6 +20,14 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+        if (movementLocked)
+        {
+            rb.linearVelocity = Vector2.zero;
+            animator.SetBool("isWalking", false);
+            animator.SetBool("isJumping", false);
+            return;
+        }
+
         // Get horizontal input for left and right movement
         float horizontalInput = Input.GetAxisRaw("Horizontal");
 
@@ -82,5 +91,16 @@ public class PlayerMovement : MonoBehaviour
         Vector3 rotation = transform.eulerAngles;
         rotation.y += 180f; // Rotate 180 degrees on the Y-axis
         transform.eulerAngles = rotation;
+    }
+
+    public void LockMovement()
+    {
+        movementLocked = true;
+        rb.linearVelocity = Vector2.zero;
+    }
+
+    public void UnlockMovement()
+    {
+        movementLocked = false;
     }
 }
